@@ -8,6 +8,8 @@ local world
 local player
 local muro
 
+local cam
+
 function love.load()
     -- Configurar los gráficos para pixel art
     love.graphics.setDefaultFilter('nearest', 'nearest')
@@ -39,6 +41,8 @@ function love.load()
     muro = { x = 150, y = 80, w = 40, h = 60 }
     -- Añadir muro al mundo de Bump
     world:add(muro, muro.x, muro.y, muro.w, muro.h)
+    -- 5. Inicializar la cámara
+    cam = Camera(player.x, player.y)
 end
 
 function love.resize(w, h)
@@ -70,25 +74,33 @@ function love.update(dt)
         -- Si no se mueve, podemos regresar al frame 1 para que se quede quieto (opcional)
         animation:gotoFrame(1)
     end
+    -- Actualizar la posición de la cámara para que siga al jugador
+    local centroX = player.x + player.w / 2
+    local centroY = player.y + player.h / 2
+    cam:lookAt(Lume.round(centroX), Lume.round(centroY))
 end
 
 function love.draw()
     Push:start()
-        -- Dibujar el muro para que lo veamos (Color Rojo)
-        love.graphics.setColor(1, 0, 0)
-        love.graphics.rectangle('fill', muro.x, muro.y, muro.w, muro.h)
-        -- Resetear el color a blanco puro (vital para no teñir la imagen del sprite de rojo)
-        love.graphics.setColor(1, 1, 1)
-        -- Dibujar la animación del jugador usando sus coordenadas actualizadas por Bump
-        local px_round = Lume.round(player.x)
-        local py_round = Lume.round(player.y)
-        animation:draw(image, px_round, py_round)
-        
-        love.graphics.setColor(0, 1, 0)
-        -- Dibujamos el rectángulo en modo 'line' para ver solo los bordes
-        love.graphics.rectangle('line', px_round, py_round, player.w, player.h)
-        -- Color en blanco al final
-        love.graphics.setColor(1, 1, 1)
+        -- La cámara que usa la resolución del juego
+        cam:attach(0, 0, GAME_WIDTH, GAME_HEIGHT)
+            -- Dibujar el muro para que lo veamos (Color Rojo)
+            love.graphics.setColor(1, 0, 0)
+            love.graphics.rectangle('fill', muro.x, muro.y, muro.w, muro.h)
+            -- Resetear el color a blanco puro (vital para no teñir la imagen del sprite de rojo)
+            love.graphics.setColor(1, 1, 1)
+            -- Dibujar la animación del jugador usando sus coordenadas actualizadas por Bump
+            local px_round = Lume.round(player.x)
+            local py_round = Lume.round(player.y)
+            animation:draw(image, px_round, py_round)
+
+            love.graphics.setColor(0, 1, 0)
+            -- Dibujamos el rectángulo en modo 'line' para ver solo los bordes
+            love.graphics.rectangle('line', px_round, py_round, player.w, player.h)
+            -- Color en blanco al final
+            love.graphics.setColor(1, 1, 1)
+        cam:detach()
+        -- Todo lo que dibujes debajo de cam:detach() se quedará pegado en la pantalla
     Push:finish()
 end
 
