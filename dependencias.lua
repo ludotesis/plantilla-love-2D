@@ -5,3 +5,4 @@ Anim = require "lib.anim8"
 Bump = require "lib.bump"
 -- Librerias HUMP
 Camera = require "lib.hump.camera"
+Class = require "lib.hump.class"
