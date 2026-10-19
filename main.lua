@@ -80,10 +80,13 @@ function love.draw()
         -- Resetear el color a blanco puro (vital para no teñir la imagen del sprite de rojo)
         love.graphics.setColor(1, 1, 1)
         -- Dibujar la animación del jugador usando sus coordenadas actualizadas por Bump
-        animation:draw(image, player.x, player.y)
+        local px_round = Lume.round(player.x)
+        local py_round = Lume.round(player.y)
+        animation:draw(image, px_round, py_round)
+        
         love.graphics.setColor(0, 1, 0)
         -- Dibujamos el rectángulo en modo 'line' para ver solo los bordes
-        love.graphics.rectangle('line', player.x, player.y, player.w, player.h)
+        love.graphics.rectangle('line', px_round, py_round, player.w, player.h)
         -- Color en blanco al final
         love.graphics.setColor(1, 1, 1)
     Push:finish()
